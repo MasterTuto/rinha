@@ -128,6 +128,10 @@ operate(true, "Or", false, true).
 operate(false, "Or", true, true).
 operate(false, "Or", false, false).
 
+cached(_, cached{}, _, _) :- fail,!.
+cached(FunctionName, Context, Arguments, Result) :-
+    get_dict(FunctionName, Context, Arguments, R)
+
 evaluate(ValueToEvaluate, _, EvaluatedValue) :-
     (string(ValueToEvaluate); number(ValueToEvaluate)),
     EvaluatedValue = ValueToEvaluate,!.
@@ -151,7 +155,10 @@ evaluate(FunctionCall, Context, Result) :-
     var(Callee, FunctionNameString),
     string_to_atom(FunctionNameString, FunctionName),
     get_dict(FunctionName, Context, Function),
-    evaluate(Function, Context, Arguments, Result).
+    (
+        cached(FunctionName, Context, Arguments, Result);
+        evaluate(Function, Context, Arguments, Result)
+    ).
 evaluate(BinaryOperation, Context, Result) :-
     binary(BinaryOperation, Operation, LeftOperand, RightOperand),
     evaluate(LeftOperand, Context, EvaluatedLeftOperand),
@@ -164,6 +171,9 @@ evaluate(IfStatement, Context, Result) :-
     -> evaluate(Then, Context, Result)
     ;  evaluate(Otherwise, Context, Result)
     ).
+evaluate(Function, _, Result) :-
+    function(Function, _, _),
+    Result = Function.
 evaluate(Function, Context, Input, Result) :-
     function(Function, Arguments, Body),
     length(Arguments, FuncionExpectedArgumentsNumber),
@@ -180,8 +190,9 @@ run(ProgramAST, Context) :-
     run(Code, Context),!.
 run(LetExpression, Context) :-
     letExpression(LetExpression, VarName, Value, Next),
+    evaluate(Value, Context, EvaluatedValue),
     string_to_atom(VarName, VarAtom),
-    put_dict(VarAtom, Context, Value, NewContext),
+    put_dict(VarAtom, Context, EvaluatedValue, NewContext),
     run(Next, NewContext),!.
 run(PrintExpression, Context) :-
     printExpr(PrintExpression, ValueToEvaluate),
