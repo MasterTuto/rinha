@@ -2,7 +2,7 @@
 
 # Variables
 SRC = main.pl        # Replace with your Prolog source file
-TARGET = out/main
+TARGET = rinha
 
 # SWI-Prolog compiler and options
 SWIPL = swipl
