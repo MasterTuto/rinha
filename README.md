@@ -6,10 +6,6 @@ _Logo, Sócrates é mortal_
 
 ```prolog
 homem(socrates).
-homem(breno).
-homem(gustavo).
-homem(osmar).
-% ...
 
 mortal(Homem) :- homem(homem).
 
@@ -40,6 +36,6 @@ docker run --rm -v $(pwd)/testes/fib.json:/var/rinha/source.rinha.json acorujada
 
 ## Exemplo
 
-### fib.json, n  = 50
+### fib.json, n = 50
 
 ![12586269025; real    0m0,692s; user    0m0,022s; sys     0m0,018s](img/image.png)
