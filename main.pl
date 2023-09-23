@@ -6,7 +6,7 @@
 %% Util predicates  %%
 %%%%%%%%%%%%%%%%%%%%%%
 
-filenameFromArgs([], 'testes/fib.json'):-!.
+filenameFromArgs([], 'source.rinha.json'):-!.
 filenameFromArgs([Head|_], Head).
 
 jsonParametersToList([], []).
