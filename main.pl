@@ -188,13 +188,18 @@ ok.
 
 to_print(String, String) :- string(String),!.
 to_print(Number, String) :- number(Number), number_string(Number, String),!.
+to_print(true, 'true'):-!.
+to_print(false, 'false'):-!.
 to_print([First, Second], String) :-
     to_print(First, PrintableFirst),
     to_print(Second, PrintableSecond),
-    string_concat(PrintableFirst, PrintableSecond, String).
+    string_concat('(', PrintableFirst, FirstPart),
+    string_concat(FirstPart, ', ', SecondPart),
+    string_concat(SecondPart, PrintableSecond, ThirdPart),
+    string_concat(ThirdPart, ')', String),!.
 to_print(Function, String) :-
     verifyKind(Function, "Function"),
-    String = '<closure>'.
+    String = '<#closure>'.
 
 cache(FunctionName, Context, Arguments, Result, NewContext) :-
     get_cache_key(FunctionName, Context, Arguments, CacheKey),
@@ -274,9 +279,9 @@ evaluate(SecondExpression, Context, Second, Context) :-
     evaluate(Value, Context, Tuple, _),
     second(Tuple, Second),!.    
 
-evaluate(PrintExpression, Context, EvaluatedValue, Context) :-
+evaluate(PrintExpression, Context, EvaluatedValue, New_Context) :-
     printExpr(PrintExpression, ValueToEvaluate),
-    evaluate(ValueToEvaluate, Context, EvaluatedValue, _),
+    evaluate(ValueToEvaluate, Context, EvaluatedValue, New_Context),
     to_print(EvaluatedValue, Printable),
     write(Printable),nl,!.
 evaluate(FunctionName, Function, Context, Input, Result, NewContext) :-
@@ -311,4 +316,4 @@ main :-
 	filenameFromArgs(Args, FileName),
     open(FileName, read, Stream),
     json_read_dict(Stream, ProgramAST),
-    run(ProgramAST),nl.
+    run(ProgramAST).
