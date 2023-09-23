@@ -7,7 +7,7 @@ _Logo, Sócrates é mortal_
 ```prolog
 homem(socrates).
 
-mortal(Homem) :- homem(homem).
+mortal(Homem) :- homem(Homem).
 
 % ?- mortal(socrates).
 ```
